@@ -9,8 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "bootstrap": "^5.3.8",
-    "monaco-editor": "^0.55.0-dev-20251107",
     "next": "16.0.1",
     "react": "19.2.0",
     "react-bootstrap": "^2.10.4",
