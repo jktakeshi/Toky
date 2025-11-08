@@ -38,6 +38,7 @@ export default function InterviewPage() {
   // Code editor state
   const [code, setCode] = useState("function solve() {\n  // your code here\n}");
   const [language, setLanguage] = useState("javascript");
+  const [submitting, setSubmitting] = useState(false);
 
   const templates: Record<string, string> = {
     javascript: "function solve() {\n  // your code here\n}",
@@ -156,8 +157,77 @@ int main() {
     setCode(templates[newLang]);
   };
 
-  const handleSubmit = () => {
-    router.push("/result");
+  // ✅ Submit with evaluation + feedback + save to sessionStorage
+  const handleSubmit = async () => {
+    if (!problem || submitting) return;
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      // 1) Evaluate code against tests
+      const evalRes = await fetch("/api/evaluate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code,
+          problem,
+          language,
+        }),
+      });
+
+      if (!evalRes.ok) {
+        const errData = await evalRes.json().catch(() => ({}));
+        throw new Error(errData.error || "Evaluation failed");
+      }
+
+      const evalResult = await evalRes.json();
+
+      // 2) Get feedback + optimal solution + scores
+      const feedbackRes = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          problem,
+          code,
+          evalResult,
+          role,
+          company,
+          language,
+        }),
+      });
+
+      if (!feedbackRes.ok) {
+        const errData = await feedbackRes.json().catch(() => ({}));
+        throw new Error(errData.error || "Feedback generation failed");
+      }
+
+      const feedbackData = await feedbackRes.json();
+
+      // 3) Save for ResultsPage (this is what your results/page.tsx expects)
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(
+          "interviewResults",
+          JSON.stringify({
+            problem,
+            code,
+            evalResult,
+            feedback: feedbackData.feedback,
+            solution: feedbackData.solution,
+            score: feedbackData.score,
+            testScore: feedbackData.testScore,
+            aiScore: feedbackData.aiScore,
+          })
+        );
+      }
+
+      // 4) Navigate to results
+      router.push("/result");
+    } catch (err: any) {
+      console.error("Submit error:", err);
+      setError(err.message || "Failed to submit solution");
+      setSubmitting(false);
+    }
   };
 
   // Shared function to call voice-interviewer (for both text + speech)
@@ -367,6 +437,12 @@ int main() {
             </p>
           )}
 
+          {error && (
+            <div className="mt-2 p-2 bg-red-100 text-red-700 rounded">
+              {error}
+            </div>
+          )}
+
           <div className={styles.chatContainer}>
             <div className={styles.chatMessages}>
               {messages.map((m, i) => (
@@ -425,8 +501,9 @@ int main() {
               size="lg"
               onClick={handleSubmit}
               className="px-5 py-2 rounded-full"
+              disabled={submitting}
             >
-              Submit Solution
+              {submitting ? "Evaluating..." : "Submit Solution"}
             </Button>
           </div>
         </Col>
@@ -455,8 +532,9 @@ int main() {
                   size="lg"
                   onClick={handleSubmit}
                   className="px-4 py-1 rounded-full"
+                  disabled={submitting}
                 >
-                  Submit Solution
+                  {submitting ? "Evaluating..." : "Submit Solution"}
                 </Button>
               </div>
             </Col>
