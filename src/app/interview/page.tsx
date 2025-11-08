@@ -1,65 +1,150 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import Editor from '@monaco-editor/react';
-import styles from './page.module.css';
+import { useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import Editor from "@monaco-editor/react";
+import styles from "./page.module.css";
+
+type Problem = {
+  id: string;
+  title: string;
+  prompt: string;
+  functionSignature?: string;
+  topics?: string[];
+  difficulty?: string;
+  constraints?: string;
+  tests: any[];
+};
 
 export default function InterviewPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const company = (searchParams.get("company") || "generic").toLowerCase();
+
+  const [problem, setProblem] = useState<Problem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Track if we've already fetched to avoid double-fetch in React Strict Mode
+  const hasFetched = useRef(false);
 
   // Code state
-  const [code, setCode] = useState<string>('function solve() {\n  // your code here\n}');
-  const [language, setLanguage] = useState<string>('javascript');
+  const [code, setCode] = useState<string>(
+    "function solve() {\n  // your code here\n}"
+  );
+  const [language, setLanguage] = useState<string>("javascript");
 
-  // Default templates per language
   const templates: Record<string, string> = {
-    javascript: 'function solve() {\n  // your code here\n}',
-    python: 'def solve():\n    # your code here\n    pass',
-    cpp: '#include <bits/stdc++.h>\nusing namespace std;\n\nvoid solve() {\n    // your code here\n}\n\nint main() {\n    solve();\n    return 0;\n}',
-    java: 'public class Solution {\n    public static void solve() {\n        // your code here\n    }\n}',
+    javascript: "function solve() {\n  // your code here\n}",
+    python: "def solve():\n    # your code here\n    pass",
+    cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+void solve() {
+    // your code here
+}
+
+int main() {
+    solve();
+    return 0;
+}`,
+    java: `public class Solution {
+    public static void solve() {
+        // your code here
+    }
+}`
   };
+
+  // Fetch a company-specific problem on mount
+  useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
+    const fetchProblem = async () => {
+      try {
+        const res = await fetch(`/api/problems?company=${company}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to generate problem");
+        }
+
+        setProblem(data);
+      } catch (err: any) {
+        setError(err.message || "Failed to load problem");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProblem();
+  }, [company]);
 
   const handleEditorChange = (value: string | undefined) => {
-    setCode(value || '');
+    setCode(value || "");
   };
 
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleLanguageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const newLang = e.target.value;
     setLanguage(newLang);
     setCode(templates[newLang]);
   };
 
-  // Handle Submit: navigate to /result page 
   const handleSubmit = () => {
-    router.push('/result');
+    // TODO: send { problem, code, language } to /api/evaluate and /api/feedback
+    router.push("/result");
   };
+
+  // Loading & error states
+  if (loading) {
+    return (
+      <div className={styles.loading}>
+        Generating a {company}-style interview question...
+      </div>
+    );
+  }
+
+  if (error || !problem) {
+    return (
+      <div className={styles.error}>
+        Failed to load problem: {error || "Unknown error"}
+      </div>
+    );
+  }
 
   return (
     <Container fluid className={styles.container}>
       <Row className="vh-100">
-        {/* Left Panel: The Question */}
-        <Col md={5} className={`${styles.panel} ${styles.questionPanel}`}>
-          <h2>Question: Two Sum</h2>
-          <p>
-            Given an array of integers <code>nums</code> and an integer <code>target</code>, 
-            return indices of the two numbers such that they add up to <code>target</code>.
-          </p>
-          <p>
-            You may assume that each input would have <strong>exactly one solution</strong>, 
-            and you may not use the same element twice.
-          </p>
-          <p>You can return the answer in any order.</p>
-  
-          <h3>Example:</h3>
-          <pre>
-{`Input: nums = [2,7,11,15], target = 9
-Output: [0,1]
-Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].`}
-          </pre>
+        {/* Left Panel: Dynamic Question */}
+        <Col
+          md={5}
+          className={`${styles.panel} ${styles.questionPanel}`}
+        >
+          <h2>{problem.title}</h2>
+          <p>{problem.prompt}</p>
+
+          {problem.constraints && (
+            <p>
+              <strong>Constraints:</strong> {problem.constraints}
+            </p>
+          )}
+
+          <div className="mt-5 text-center">
+            <Button
+              variant="success"
+              size="lg"
+              onClick={handleSubmit}
+              className="px-5 py-2 rounded-full"
+            >
+              Submit Solution
+            </Button>
+          </div>
         </Col>
-  
+
         {/* Right Panel: IDE */}
         <Col md={7} className={`${styles.panel} ${styles.idePanel}`}>
             <Row>
@@ -93,7 +178,6 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].`}
               </Col>
             </Row>
 
-          {/* Monaco Editor */}
           <Editor
             height="90%"
             language={language}
@@ -103,10 +187,10 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].`}
             options={{
               minimap: { enabled: false },
               fontSize: 14,
-              lineNumbers: 'on',
+              lineNumbers: "on",
               scrollBeyondLastLine: false,
               automaticLayout: true,
-              tabSize: 2,
+              tabSize: 2
             }}
           />
         </Col>
