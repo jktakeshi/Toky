@@ -59,3 +59,9 @@
 .companyButton:hover {
   background-color: #e0e0e0;
 }
+
+.companyButtonSelected {
+  background-color: #111827; /* dark highlight */
+  color: #ffffff;
+  border-color: #111827;
+}
