@@ -1,67 +1,134 @@
 .welcomeScreen {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f9f9f9;
+  background-color: #ffffff;
+}
+
+.titleRow {
+  background: linear-gradient(to right, #198754, #66AF8D);
+  padding: 80px 80px;
 }
 
 .title {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: #333;
+  font-family: system-ui;
+  font-size: 8rem;
+  color: white;
+  text-align: left;
+}
+
+.descRow {
+  background: white;
+  padding-top: 60px;
+  padding-bottom: 20px;
+  padding-right: 200px;
+  padding-left: 200px;
+}
+
+.desc {
+  font-family: system-ui;
+  font-size: 1.4rem;
+  color: black;
+  text-align: center;
+}
+
+.searchRow {
+  background: white;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
 }
 
 .searchBar {
-  width: 80%;
-  max-width: 400px;
+  flex-grow: 1;
   padding: 10px;
-  margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  font-family: system-ui;
   font-size: 1rem;
   color: black;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
-.startButton {
+.enterButton {
   padding: 10px 20px;
-  margin-bottom: 20px;
-  background-color: #007bff;
+  background-color: #198754;
   color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
+  border: 2px solid #0F5132;
+  border-radius: 0 5px 5px 0;
   cursor: pointer;
 }
 
+.buttonRow {
+  background: white;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.startButton {
+  padding: 8px 16px;
+  background-color: #198754;
+  border: 2px solid #0F5132;
+  border-radius: 10px;
+  font-family: system-ui;
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+  width: 200px;
+  height: 50px;
+}
+
 .startButton:hover {
-  background-color: #0056b3;
+  background-color: #146C43;
+}
+
+.companyRow {
+  background: #66AF8D;
+  padding: 80px 80px;
 }
 
 .companyButtons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
+  gap: 40px;
 }
 
 .companyButton {
-  padding: 10px 15px;
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 80px;
+  background-color: #3F9B71;
+  color: #000000;
+  border: 1px solid #000000;
+  border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.companyLogo {
+  margin-top: 10px;
+  height: 40px;
 }
 
 .companyButton:hover {
-  background-color: #e0e0e0;
+  transform: scale(1.1);
 }
 
 .companyButtonSelected {
-  background-color: #111827; /* dark highlight */
+  background-color: #198754; /* dark highlight */
   color: #ffffff;
-  border-color: #111827;
+  border-color: #000000;
+  transform: scale(1.05);
 }

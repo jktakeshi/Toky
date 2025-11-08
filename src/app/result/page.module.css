@@ -8,5 +8,6 @@
   cursor: pointer;
   margin: 0 32px; /* Adds margin on the left and right */
   width: 150px; /* Adjust as needed */
+  font-family: system-ui;
   flex-grow: 1;
 }

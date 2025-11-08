@@ -132,17 +132,6 @@ int main() {
               <strong>Constraints:</strong> {problem.constraints}
             </p>
           )}
-
-          <div className="mt-5 text-center">
-            <Button
-              variant="success"
-              size="lg"
-              onClick={handleSubmit}
-              className="px-5 py-2 rounded-full"
-            >
-              Submit Solution
-            </Button>
-          </div>
         </Col>
 
         {/* Right Panel: IDE */}

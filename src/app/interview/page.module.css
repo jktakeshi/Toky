@@ -19,7 +19,7 @@
 .idePanel {
   background-color: #282c34;
   color: #abb2bf;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: system-ui;
 }
 
 .ideTextarea {
@@ -30,7 +30,7 @@
   border: none;
   outline: none;
   resize: none;
-  font-family: inherit;
+  font-family: system-ui;
   font-size: 1rem;
 }
 
