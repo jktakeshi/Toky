@@ -1,0 +1,36 @@
+.container {
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
+}
+
+.panel {
+  padding: 2rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.questionPanel {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.idePanel {
+  background-color: #282c34;
+  color: #abb2bf;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.ideTextarea {
+  width: 100%;
+  height: 100%;
+  background-color: inherit;
+  color: inherit;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
