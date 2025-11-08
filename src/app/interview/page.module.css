@@ -34,3 +34,45 @@
   font-size: 1rem;
 }
 
+.chatContainer {
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 260px;
+}
+
+.chatMessages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.interviewerMessage {
+  color: #bfdbfe;
+}
+
+.candidateMessage {
+  color: #bbf7d0;
+}
+
+.chatInputRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.chatInput {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid #4b5563;
+  background: #020817;
+  color: #e5e7eb;
+}
