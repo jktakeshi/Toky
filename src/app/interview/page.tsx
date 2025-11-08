@@ -31,7 +31,7 @@ export default function InterviewPage() {
     setCode(templates[newLang]);
   };
 
-  // 👇 Handle Submit: navigate to /result page
+  // Handle Submit: navigate to /result page 
   const handleSubmit = () => {
     router.push('/result');
   };
@@ -58,36 +58,40 @@ export default function InterviewPage() {
 Output: [0,1]
 Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].`}
           </pre>
-
-          {/* 👇 Submit button under question panel */}
-          <div className="mt-5 text-center">
-            <Button
-              variant="success"
-              size="lg"
-              onClick={handleSubmit}
-              className="px-5 py-2 rounded-full"
-            >
-              Submit Solution
-            </Button>
-          </div>
         </Col>
   
         {/* Right Panel: IDE */}
         <Col md={7} className={`${styles.panel} ${styles.idePanel}`}>
-          {/* Language Selector */}
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <h4 className="mb-0">Language:</h4>
-            <Form.Select
-              value={language}
-              onChange={handleLanguageChange}
-              style={{ width: '200px' }}
-            >
-              <option value="javascript">JavaScript</option>
-              <option value="python">Python</option>
-              <option value="cpp">C++</option>
-              <option value="java">Java</option>
-            </Form.Select>
-          </div>
+            <Row>
+              <Col md={6}>
+                {/* Language Selector */}
+                <div className="d-flex justify-left align-items-center mb-3">
+                  <Form.Select
+                    value={language}
+                    onChange={handleLanguageChange}
+                    style={{ width: '200px' }}
+                  >
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="cpp">C++</option>
+                    <option value="java">Java</option>
+                  </Form.Select>
+                </div>
+              </Col>
+              <Col md={6}>
+                {/* Submit button under question panel */}
+                <div className="d-flex justify-content-end">
+                  <Button
+                    variant="success"
+                    size="lg"
+                    onClick={handleSubmit}
+                    className="px-4 py-1 rounded-full"
+                  >
+                    Submit Solution
+                  </Button>
+                </div>
+              </Col>
+            </Row>
 
           {/* Monaco Editor */}
           <Editor
