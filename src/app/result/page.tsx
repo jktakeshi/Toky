@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import styles from './page.module.css';
 
 export default function ResultsPage() {
+  const router = useRouter();
   const [score, setScore] = useState(70); // default example score (0–100)
 
   return (
@@ -35,22 +37,16 @@ export default function ResultsPage() {
         </div>
       </div>
 
-      {/* Buttons */}
-      <div className="flex gap-6 mt-12">
-        <Link
-          href="/welcome"
-          className="px-6 py-2 bg-gray-200 dark:bg-gray-700 rounded-full text-gray-800 dark:text-gray-200 font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-        >
-          Home
-        </Link>
-
-        <button
-          onClick={() => setScore(0)}
-          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition"
-        >
-          Try Again
-        </button>
-      </div>
+      <button
+            onClick={() => router.push("/")}
+            className={styles.button}>
+            Home
+      </button>
+      <button
+            onClick={() => router.push("/interview")}
+            className={styles.button}>
+            Practice Again
+      </button>
     </div>
   );
 }
