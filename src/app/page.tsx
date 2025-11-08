@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import { Container, Row, Col } from 'react-bootstrap';
 import styles from "./home_page.module.css";
 
 const WelcomeScreen: React.FC = () => {
@@ -21,6 +22,12 @@ const WelcomeScreen: React.FC = () => {
             onClick={() => router.push("/interview")}
             className={styles.startButton}>
             Start
+      </button>
+
+      <button
+            onClick={() => router.push("/result")}
+            className={styles.startButton}>
+            results
       </button>
 
       <div className={styles.companyButtons}>

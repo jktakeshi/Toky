@@ -2,33 +2,15 @@
 
 import { useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
+import Editor from '@monaco-editor/react';
 import styles from './page.module.css';
 
 export default function InterviewPage() {
-  // State to hold the code from the "IDE"
+  // State to hold the code from the IDE
   const [code, setCode] = useState<string>('function solve() {\n  // your code here\n}');
 
-  // This is the magic part for handling the Tab key
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Tab') {
-      e.preventDefault(); // Prevent default tab behavior (losing focus)
-
-      const { selectionStart, selectionEnd } = e.currentTarget;
-      
-      // Insert a tab character (or 2 spaces) at the cursor position
-      const newCode = 
-        code.substring(0, selectionStart) + 
-        '  ' + // Using 2 spaces for the tab
-        code.substring(selectionEnd);
-
-      setCode(newCode);
-
-      // Move the cursor to after the inserted tab
-      // We need to do this in a setTimeout to make sure it happens after the state update
-      setTimeout(() => {
-        e.currentTarget.selectionStart = e.currentTarget.selectionEnd = selectionStart + 2;
-      }, 0);
-    }
+  const handleEditorChange = (value: string | undefined) => {
+    setCode(value || '');
   };
 
   return (
@@ -55,14 +37,22 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].`}
           </pre>
         </Col>
   
-        {/* Right Panel: The Mock IDE */}
+        {/* Right Panel: Monaco Editor IDE */}
         <Col md={7} className={`${styles.panel} ${styles.idePanel}`}>
-          <textarea
+          <Editor
+            height="100%"
+            defaultLanguage="javascript"
             value={code}
-            onChange={(e) => setCode(e.target.value)}
-            onKeyDown={handleKeyDown}
-            spellCheck="false"
-            className={styles.ideTextarea}
+            onChange={handleEditorChange}
+            theme="vs-dark"
+            options={{
+              minimap: { enabled: false },
+              fontSize: 14,
+              lineNumbers: 'on',
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+              tabSize: 2,
+            }}
           />
         </Col>
       </Row>
