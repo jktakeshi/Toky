@@ -35,7 +35,7 @@ export default function InterviewPage() {
     <Container fluid className={styles.container}>
       <Row className="vh-100">
         {/* Left Panel: The Question */}
-        <Col md={6} className={`${styles.panel} ${styles.questionPanel}`}>
+        <Col md={5} className={`${styles.panel} ${styles.questionPanel}`}>
           <h2>Question: Two Sum</h2>
           <p>
             Given an array of integers `nums` and an integer `target`, 
@@ -56,7 +56,7 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].`}
         </Col>
   
         {/* Right Panel: The Mock IDE */}
-        <Col md={6} className={`${styles.panel} ${styles.idePanel}`}>
+        <Col md={7} className={`${styles.panel} ${styles.idePanel}`}>
           <textarea
             value={code}
             onChange={(e) => setCode(e.target.value)}
