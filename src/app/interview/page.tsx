@@ -477,6 +477,138 @@ int main() {
               </Button>
             </div>
           )}
+
+          {/* Problem Tab Content */}
+          {(activeTab === "problem" || !mockInterviewMode) && (
+            <div>
+              <p>{problem.prompt}</p>
+
+              {problem.constraints && (
+                <p>
+                  <strong>Constraints:</strong> {problem.constraints}
+                </p>
+              )}
+
+              {error && (
+                <div className="mt-3 p-3 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded text-red-700 dark:text-red-400">
+                  {error}
+                </div>
+              )}
+
+              <div className="mt-5 text-center">
+                <Button
+                  variant="success"
+                  size="lg"
+                  onClick={handleSubmit}
+                  className="px-5 py-2 rounded-full"
+                  disabled={submitting}
+                >
+                  {submitting ? "Evaluating..." : "Submit Solution"}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Chat Tab Content */}
+          {mockInterviewMode && activeTab === "chat" && (
+            <div className={styles.chatContainer}>
+              <div className={styles.chatMessages}>
+                {conversationHistory.length === 0 && !isSending && (
+                  <div className="text-center text-muted p-4">
+                    Starting interview...
+                  </div>
+                )}
+                {conversationHistory.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.chatMessage} ${
+                      msg.role === "user" ? styles.userMessage : styles.assistantMessage
+                    }`}
+                  >
+                    <div className={styles.messageRole}>
+                      {msg.role === "user" ? "You" : "Interviewer"}
+                    </div>
+                    <div className={styles.messageContent}>{msg.content}</div>
+                  </div>
+                ))}
+                {isSending && (
+                  <div className={styles.chatMessage}>
+                    <div className={styles.messageRole}>Interviewer</div>
+                    <div className={styles.messageContent}>
+                      <div className="spinner-border spinner-border-sm" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+
+              <div className={styles.chatInput}>
+                <div className="d-flex gap-2 mb-2">
+                  <Button
+                    variant="outline-info"
+                    size="sm"
+                    onClick={requestHint}
+                    disabled={isSending}
+                  >
+                    💡 Get Hint
+                  </Button>
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={requestFollowUp}
+                    disabled={isSending}
+                  >
+                    ❓ Ask Follow-up
+                  </Button>
+                </div>
+                <div className="d-flex gap-2 align-items-start">
+                  <div className="flex-grow-1 position-relative">
+                    <Form.Control
+                      as="textarea"
+                      rows={2}
+                      value={chatMessage}
+                      onChange={(e) => setChatMessage(e.target.value)}
+                      onKeyPress={handleChatKeyPress}
+                      placeholder="Type your message or click microphone to speak..."
+                      disabled={isSending}
+                      className={styles.chatTextarea}
+                    />
+                    {speechSupported && (
+                      <button
+                        type="button"
+                        onClick={toggleListening}
+                        disabled={isSending}
+                        className={`${styles.microphoneButton} ${isListening ? styles.listening : ''}`}
+                        title={isListening ? "Stop recording" : "Start voice input"}
+                      >
+                        {isListening ? (
+                          <span className={styles.recordingIndicator}>🎤</span>
+                        ) : (
+                          <span>🎤</span>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                  <Button
+                    variant="primary"
+                    onClick={() => sendMessage("message")}
+                    disabled={isSending || !chatMessage.trim()}
+                    className={styles.sendButton}
+                  >
+                    Send
+                  </Button>
+                </div>
+                {isListening && (
+                  <div className={styles.listeningIndicator}>
+                    <span className={styles.listeningPulse}></span>
+                    Listening... Speak now
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </Col>
 
         {/* Right Panel: IDE */}
