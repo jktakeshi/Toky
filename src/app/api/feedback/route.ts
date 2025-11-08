@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { problem, code, evalResult, role, company } = body;
+  const { problem, code, evalResult, role, company, language } = body;
 
   // Minimal validation
   if (!problem || !code || !evalResult) {
@@ -26,16 +26,91 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Build a strict, interview-style feedback prompt
-  const messages = [
+  // First, get the optimal solution from AI
+  const solutionMessages = [
+    {
+      role: "system",
+      content:
+        "You are a senior software engineer providing optimal solutions to coding problems.\n" +
+        "- Provide clean, efficient, and well-commented code.\n" +
+        "- Follow best practices for the given language.\n" +
+        "- Ensure the solution passes all test cases.\n"
+    },
+    {
+      role: "user",
+      content: `
+Problem:
+Title: ${problem.title}
+Prompt: ${problem.prompt}
+Constraints: ${problem.constraints || "N/A"}
+Topics: ${(problem.topics || []).join(", ")}
+Function Signature: ${problem.functionSignature || "N/A"}
+
+Test Cases:
+${JSON.stringify(problem.tests, null, 2)}
+
+Please provide an optimal solution in ${language || "javascript"} that:
+1. Solves the problem correctly
+2. Has optimal time and space complexity
+3. Is clean and well-commented
+4. Handles all edge cases
+
+Return ONLY the code solution, no explanations.
+`
+    }
+  ];
+
+  // Get the solution
+  const solutionRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "openai/gpt-4.1-mini",
+      messages: solutionMessages,
+      temperature: 0.2
+    })
+  });
+
+  if (!solutionRes.ok) {
+    const errorText = await solutionRes.text().catch(() => "");
+    return NextResponse.json(
+      {
+        error: "Failed to generate solution",
+        status: solutionRes.status,
+        body: errorText
+      },
+      { status: 502 }
+    );
+  }
+
+  const solutionData = await solutionRes.json();
+  const solution = solutionData?.choices?.[0]?.message?.content?.trim() || "";
+
+  if (!solution) {
+    return NextResponse.json(
+      { error: "No solution generated", raw: solutionData },
+      { status: 502 }
+    );
+  }
+
+  // Calculate score based on test results
+  const testScore = evalResult.score || 0; // 0-100 based on passed tests
+  const passedTests = evalResult.passedCount || 0;
+  const totalTests = evalResult.totalTests || 1;
+
+  // Now generate feedback comparing the code with the solution
+  const feedbackMessages = [
     {
       role: "system",
       content:
         "You are a senior software engineer conducting a coding interview.\n" +
-        "- Use ONLY the provided problem, candidate code, and test results as ground truth.\n" +
-        "- Do NOT claim to be from any specific company.\n" +
-        "- Be concise, clear, and structured.\n" +
-        "- Do NOT invent tests or behavior that are not shown.\n"
+        "- Compare the candidate's code with the optimal solution.\n" +
+        "- Provide specific, actionable feedback on how to fix the code.\n" +
+        "- Be constructive and educational.\n" +
+        "- Calculate a score from 0-100 based on correctness, code quality, and similarity to optimal solution.\n"
     },
     {
       role: "user",
@@ -52,64 +127,85 @@ Topics: ${(problem.topics || []).join(", ")}
 Candidate's code:
 ${code}
 
-Test results (JSON):
-${JSON.stringify(evalResult, null, 2)}
+Optimal solution:
+${solution}
 
-Please provide feedback with the following structure (plain text):
+Test results:
+- Passed: ${passedTests}/${totalTests}
+- Test Score: ${testScore}/100
+- Results: ${JSON.stringify(evalResult.results || [], null, 2)}
 
-1. Correctness
-- Did the solution pass the tests?
-- If some tests failed or there was a runtime error, clearly explain why in 1-3 sentences.
+Please provide concise, conversational feedback (2-3 paragraphs maximum). Do NOT use lists or numbered items. Write in a natural, flowing style.
 
-2. Complexity
-- Estimate the time and space complexity based on the code.
+Structure your response as:
+- A brief opening paragraph summarizing the overall performance and test results
+- A middle paragraph explaining the key issues and how to fix them, referencing the optimal solution approach
+- A closing paragraph with complexity analysis and final thoughts
 
-3. Code Quality & Communication
-- Comment on readability, structure, edge cases, and how you'd feel about this in a real interview.
+Keep it concise (under 200 words total). Be constructive and specific but avoid lengthy explanations.
 
-4. Next Steps
-- 3 concrete, actionable suggestions to improve.
-
-5. Score
-- Overall rating from 1 to 5 for this round (1 = poor, 3 = borderline, 5 = strong pass).
+At the end, provide a score from 0-100 in this exact format: "SCORE: [number]"
 `
     }
   ];
 
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const feedbackRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${OPENROUTER_API_KEY}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: "openai/gpt-4.1-mini", // adjust if you prefer another OpenRouter model
-      messages,
+      model: "openai/gpt-4.1-mini",
+      messages: feedbackMessages,
       temperature: 0.3
     })
   });
 
-  if (!res.ok) {
-    const errorText = await res.text().catch(() => "");
+  if (!feedbackRes.ok) {
+    const errorText = await feedbackRes.text().catch(() => "");
     return NextResponse.json(
       {
         error: "OpenRouter request failed",
-        status: res.status,
+        status: feedbackRes.status,
         body: errorText
       },
       { status: 502 }
     );
   }
 
-  const data = await res.json();
-  const feedback = data?.choices?.[0]?.message?.content?.trim() || "";
+  const feedbackData = await feedbackRes.json();
+  const feedback = feedbackData?.choices?.[0]?.message?.content?.trim() || "";
 
   if (!feedback) {
     return NextResponse.json(
-      { error: "No feedback generated", raw: data },
+      { error: "No feedback generated", raw: feedbackData },
       { status: 502 }
     );
   }
 
-  return NextResponse.json({ feedback });
+  // Extract score from feedback (look for "SCORE: XX" pattern)
+  let aiScore = testScore; // Default to test score
+  const scoreMatch = feedback.match(/SCORE:\s*(\d+)/i);
+  if (scoreMatch) {
+    aiScore = parseInt(scoreMatch[1], 10);
+  } else {
+    // Fallback: look for other patterns
+    const fallbackMatch = feedback.match(/Score:\s*(\d+)/i) ||
+                         feedback.match(/(\d+)\s*\/\s*100/i);
+    if (fallbackMatch) {
+      aiScore = parseInt(fallbackMatch[1], 10);
+    }
+  }
+
+  // Use a weighted average: 60% test score, 40% AI assessment
+  const finalScore = Math.round(testScore * 0.6 + aiScore * 0.4);
+
+  return NextResponse.json({ 
+    feedback,
+    solution,
+    score: finalScore,
+    testScore,
+    aiScore
+  });
 }
