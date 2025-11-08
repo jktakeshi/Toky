@@ -2,54 +2,109 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Container, Row } from "react-bootstrap";
 import styles from "./home_page.module.css";
 
-const COMPANIES = ["Google", "Netflix", "Amazon", "Facebook", "Microsoft"];
+import GoogleLogo from "../../public/google.png";
+import NetflixLogo from "../../public/netflix.webp";
+import AmazonLogo from "../../public/amazon.png";
+import FacebookLogo from "../../public/facebook.png";
+import MicrosoftLogo from "../../public/microsoft.png";
+
+const COMPANIES = [
+  { name: "Google", logo: GoogleLogo },
+  { name: "Netflix", logo: NetflixLogo },
+  { name: "Amazon", logo: AmazonLogo },
+  { name: "Facebook", logo: FacebookLogo },
+  { name: "Microsoft", logo: MicrosoftLogo },
+];
 
 const WelcomeScreen: React.FC = () => {
   const router = useRouter();
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleStart = () => {
-    if (!selectedCompany) {
-      alert("Please select a company first.");
+    const companyToStart = selectedCompany || searchQuery.trim();
+    if (!companyToStart) {
+      alert("Please select a company or enter a topic first.");
       return;
     }
 
-    const companyParam = selectedCompany.toLowerCase();
-    // Pass company to /interview, which will call /api/problems
+    const companyParam = companyToStart.toLowerCase();
     router.push(`/interview?company=${encodeURIComponent(companyParam)}`);
   };
 
+  const handleSearch = () => {
+    const trimmedQuery = searchQuery.trim();
+    if (!trimmedQuery) {
+      alert("Please enter a company or topic to search for before pressing Enter.");
+      return;
+    }
+    setSelectedCompany(trimmedQuery);
+    setSearchQuery("");
+  };
+
   return (
-    <div className={styles.welcomeScreen}>
-      <h1 className={styles.title}>Mock Interview App</h1>
+    <Container fluid className="p-0">
+      <div className={styles.welcomeScreen}>
+        {/* Title */}
+        <Row className={styles.titleRow}>
+          <h1 className={styles.title}>Toky</h1>
+        </Row>
 
-      <input
-        type="text"
-        className={styles.searchBar}
-        placeholder="Search for a company or topic..."
-      />
+        {/* Description */}
+        <Row className={styles.descRow}>
+          <p className={styles.desc}>
+            Welcome to Toky, an AI-powered technical interview helper. Select one of the preset companies or
+            search for your own. Then click start to load into our built in IDE and hone your technical interview
+            skills while getting live feedback from our AI.
+          </p>
+        </Row>
 
-      <button onClick={handleStart} className={styles.startButton}>
-        Start
-      </button>
+        {/* Search Bar */}
+        <Row className={styles.searchRow}>
+          <div className={styles.searchContainer}>
+            <input
+              type="text"
+              className={styles.searchBar}
+              placeholder="Search for a company or topic..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button onClick={handleSearch} className={styles.enterButton}>
+              Enter
+            </button>
+          </div>
+        </Row>
 
-      <div className={styles.companyButtons}>
-        {COMPANIES.map((company) => (
-          <button
-            key={company}
-            onClick={() => setSelectedCompany(company)}
-            className={`${styles.companyButton} ${
-              selectedCompany === company ? styles.companyButtonSelected : ""
-            }`}
-          >
-            {company}
+        <Row className={styles.buttonRow}>
+          <button onClick={handleStart} className={styles.startButton}>
+            Start
           </button>
-        ))}
+        </Row>
+
+        {/* Suggested companies */}
+        <Row className={styles.companyRow}>
+          <div className={styles.companyButtons}>
+            {COMPANIES.map((company) => (
+              <button
+                key={company.name}
+                onClick={() => setSelectedCompany(company.name)}
+                className={`${styles.companyButton} ${
+                  selectedCompany === company.name ? styles.companyButtonSelected : ""
+                }`}
+              >
+                <span>{company.name}</span>
+                {/* The 'src' will be handled by your image imports */}
+                <img src={company.logo.src} alt={`${company.name} Logo`} className={styles.companyLogo} />
+              </button>
+            ))}
+          </div>
+        </Row>
+
       </div>
-    </div>
+    </Container>
   );
 };
-
 export default WelcomeScreen;
