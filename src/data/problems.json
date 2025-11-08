@@ -1,0 +1,524 @@
+[
+  {
+    "id": "find-pairs-with-difference-k",
+    "title": "Find Pairs with Difference K",
+    "prompt": "Given an integer array and an integer k, return the number of unique pairs (i, j) where the absolute difference between nums[i] and nums[j] is k.",
+    "functionSignature": "int findPairsWithDifference(int[] nums, int k)",
+    "topics": [
+      "arrays",
+      "hashmap",
+      "two pointers"
+    ],
+    "difficulty": "easy",
+    "roles": [
+      "intern",
+      "newgrad",
+      "swe1"
+    ],
+    "companyStyle": [
+      "google",
+      "amazon"
+    ],
+    "constraints": "1 <= nums.length <= 10^4, 0 <= nums[i] <= 10^5, 0 <= k <= 10^5",
+    "tests": [
+      {
+        "description": "Basic test with pairs having difference 2",
+        "input": {
+          "nums": [
+            1,
+            3,
+            5,
+            7
+          ],
+          "k": 2
+        },
+        "expected": 3
+      },
+      {
+        "description": "No pairs with difference 0 since distinct pairs are required",
+        "input": {
+          "nums": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "k": 0
+        },
+        "expected": 1
+      },
+      {
+        "description": "Empty array returns zero",
+        "input": {
+          "nums": [],
+          "k": 1
+        },
+        "expected": 0
+      }
+    ]
+  },
+  {
+    "id": "longest-substring-with-at-most-two-distinct-characters",
+    "title": "Longest Substring with At Most Two Distinct Characters",
+    "prompt": "Given a string s, find the length of the longest substring that contains at most two distinct characters.",
+    "functionSignature": "int lengthOfLongestSubstringTwoDistinct(string s)",
+    "topics": [
+      "strings",
+      "sliding window",
+      "hashmap"
+    ],
+    "difficulty": "medium",
+    "roles": [
+      "newgrad",
+      "swe1"
+    ],
+    "companyStyle": [
+      "meta",
+      "amazon"
+    ],
+    "constraints": "1 <= s.length <= 10^5, s consists of English letters.",
+    "tests": [
+      {
+        "description": "Basic string with repeated chars",
+        "input": {
+          "s": "eceba"
+        },
+        "expected": 3
+      },
+      {
+        "description": "String with two distinct chars entire string",
+        "input": {
+          "s": "ccaabbb"
+        },
+        "expected": 5
+      },
+      {
+        "description": "String with single character",
+        "input": {
+          "s": "aaaaa"
+        },
+        "expected": 5
+      }
+    ]
+  },
+  {
+    "id": "merge-sorted-intervals",
+    "title": "Merge Sorted Intervals",
+    "prompt": "Given a list of intervals where each interval is [start, end], merge all overlapping intervals and return the result sorted by start time.",
+    "functionSignature": "List<List<int>> mergeIntervals(List<List<int>> intervals)",
+    "topics": [
+      "arrays",
+      "sorting",
+      "intervals"
+    ],
+    "difficulty": "easy",
+    "roles": [
+      "intern",
+      "newgrad"
+    ],
+    "companyStyle": [
+      "google",
+      "meta"
+    ],
+    "constraints": "1 <= intervals.length <= 10^4, 0 <= start <= end <= 10^6",
+    "tests": [
+      {
+        "description": "Simple overlapping intervals",
+        "input": {
+          "intervals": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              8,
+              10
+            ],
+            [
+              15,
+              18
+            ]
+          ]
+        },
+        "expected": [
+          [
+            1,
+            6
+          ],
+          [
+            8,
+            10
+          ],
+          [
+            15,
+            18
+          ]
+        ]
+      },
+      {
+        "description": "Intervals with no overlap",
+        "input": {
+          "intervals": [
+            [
+              1,
+              2
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              5,
+              6
+            ]
+          ]
+        },
+        "expected": [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            5,
+            6
+          ]
+        ]
+      },
+      {
+        "description": "Single interval",
+        "input": {
+          "intervals": [
+            [
+              1,
+              5
+            ]
+          ]
+        },
+        "expected": [
+          [
+            1,
+            5
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "count-subarrays-with-sum-equals-k",
+    "title": "Count Subarrays with Sum Equals K",
+    "prompt": "Given an integer array nums and an integer k, return the total number of continuous subarrays whose sum equals to k.",
+    "functionSignature": "int countSubarraysWithSumK(int[] nums, int k)",
+    "topics": [
+      "arrays",
+      "prefix sum",
+      "hashmap"
+    ],
+    "difficulty": "medium",
+    "roles": [
+      "newgrad",
+      "swe1"
+    ],
+    "companyStyle": [
+      "google",
+      "amazon"
+    ],
+    "constraints": "1 <= nums.length <= 2 * 10^4, -1000 <= nums[i] <= 1000, -10^7 <= k <= 10^7",
+    "tests": [
+      {
+        "description": "Simple case with positive numbers",
+        "input": {
+          "nums": [
+            1,
+            1,
+            1
+          ],
+          "k": 2
+        },
+        "expected": 2
+      },
+      {
+        "description": "Case including negative values",
+        "input": {
+          "nums": [
+            1,
+            2,
+            3,
+            -3,
+            2
+          ],
+          "k": 3
+        },
+        "expected": 3
+      },
+      {
+        "description": "No subarray sums to k",
+        "input": {
+          "nums": [
+            1,
+            2,
+            3
+          ],
+          "k": 7
+        },
+        "expected": 0
+      }
+    ]
+  },
+  {
+    "id": "minimum-window-substring-to-cover-pattern",
+    "title": "Minimum Window Substring to Cover Pattern",
+    "prompt": "Given two strings s and t, find the minimum window substring of s such that every character in t (including duplicates) is included in the window. If no such window exists, return an empty string.",
+    "functionSignature": "string minWindowSubstring(string s, string t)",
+    "topics": [
+      "strings",
+      "sliding window",
+      "hashmap"
+    ],
+    "difficulty": "hard",
+    "roles": [
+      "swe1"
+    ],
+    "companyStyle": [
+      "amazon",
+      "meta"
+    ],
+    "constraints": "1 <= s.length, t.length <= 10^5, s and t consist of English letters.",
+    "tests": [
+      {
+        "description": "Example with overlapping pattern",
+        "input": {
+          "s": "ADOBECODEBANC",
+          "t": "ABC"
+        },
+        "expected": "BANC"
+      },
+      {
+        "description": "Pattern equals string",
+        "input": {
+          "s": "a",
+          "t": "a"
+        },
+        "expected": "a"
+      },
+      {
+        "description": "Pattern not in string",
+        "input": {
+          "s": "a",
+          "t": "aa"
+        },
+        "expected": ""
+      }
+    ]
+  },
+  {
+    "id": "serialize-and-deserialize-n-ary-tree",
+    "title": "Serialize and Deserialize N-ary Tree",
+    "prompt": "Design an algorithm to serialize and deserialize an N-ary tree. Each node contains a value and a list of children. Implement serialize(root) which returns a string and deserialize(data) which reconstructs the tree.",
+    "functionSignature": "string serialize(Node root); Node deserialize(string data)",
+    "topics": [
+      "trees",
+      "dfs",
+      "design"
+    ],
+    "difficulty": "hard",
+    "roles": [
+      "swe1"
+    ],
+    "companyStyle": [
+      "google",
+      "meta"
+    ],
+    "constraints": "Number of nodes in the tree is in the range [1, 10^4]. Node values are integers in [0, 10^6].",
+    "tests": [
+      {
+        "description": "Serialize and deserialize a simple 3-ary tree",
+        "input": {
+          "root": {
+            "val": 1,
+            "children": [
+              {
+                "val": 3,
+                "children": [
+                  {
+                    "val": 5,
+                    "children": []
+                  },
+                  {
+                    "val": 6,
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "val": 2,
+                "children": []
+              },
+              {
+                "val": 4,
+                "children": []
+              }
+            ]
+          }
+        },
+        "expected": "Reconstructed tree equals original"
+      },
+      {
+        "description": "Serialize and deserialize single node tree",
+        "input": {
+          "root": {
+            "val": 10,
+            "children": []
+          }
+        },
+        "expected": "Reconstructed tree equals original"
+      }
+    ]
+  },
+  {
+    "id": "detect-cycle-in-directed-graph",
+    "title": "Detect Cycle in Directed Graph",
+    "prompt": "Given a directed graph represented as an adjacency list, determine if the graph contains any cycles.",
+    "functionSignature": "bool hasCycleInDirectedGraph(int numNodes, List<List<int>> edges)",
+    "topics": [
+      "graphs",
+      "dfs",
+      "topological sort"
+    ],
+    "difficulty": "medium",
+    "roles": [
+      "newgrad",
+      "swe1"
+    ],
+    "companyStyle": [
+      "google",
+      "amazon"
+    ],
+    "constraints": "1 <= numNodes <= 10^4, 0 <= edges.length <= 10^5",
+    "tests": [
+      {
+        "description": "Simple graph with a cycle",
+        "input": {
+          "numNodes": 4,
+          "edges": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              1
+            ]
+          ]
+        },
+        "expected": true
+      },
+      {
+        "description": "Graph with no cycles",
+        "input": {
+          "numNodes": 3,
+          "edges": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ]
+        },
+        "expected": false
+      },
+      {
+        "description": "Single node graph",
+        "input": {
+          "numNodes": 1,
+          "edges": []
+        },
+        "expected": false
+      }
+    ]
+  },
+  {
+    "id": "kth-largest-element-in-a-stream",
+    "title": "Kth Largest Element in a Stream",
+    "prompt": "Design a class that maintains the kth largest element in a stream of integers. Implement methods add(val) which adds val to the stream and returns the kth largest element.",
+    "functionSignature": "class KthLargest { KthLargest(int k, int[] nums); int add(int val); }",
+    "topics": [
+      "heap",
+      "design",
+      "priority queue"
+    ],
+    "difficulty": "medium",
+    "roles": [
+      "newgrad",
+      "swe1"
+    ],
+    "companyStyle": [
+      "amazon",
+      "google"
+    ],
+    "constraints": "1 <= k <= 10^4, nums.length <= 10^4, -10^4 <= val <= 10^4",
+    "tests": [
+      {
+        "description": "Initialize and add elements",
+        "input": {
+          "k": 3,
+          "nums": [
+            4,
+            5,
+            8,
+            2
+          ],
+          "operations": [
+            3,
+            5,
+            10,
+            9,
+            4
+          ]
+        },
+        "expected": [
+          4,
+          5,
+          5,
+          8,
+          8
+        ]
+      },
+      {
+        "description": "All elements smaller than kth",
+        "input": {
+          "k": 1,
+          "nums": [],
+          "operations": [
+            -1,
+            -2,
+            -3
+          ]
+        },
+        "expected": [
+          -1,
+          -1,
+          -1
+        ]
+      }
+    ]
+  }
+]
