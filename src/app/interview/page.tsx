@@ -1,16 +1,31 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Form } from 'react-bootstrap';
 import Editor from '@monaco-editor/react';
 import styles from './page.module.css';
 
 export default function InterviewPage() {
-  // State to hold the code from the IDE
+  // Code state
   const [code, setCode] = useState<string>('function solve() {\n  // your code here\n}');
+  const [language, setLanguage] = useState<string>('javascript');
+
+  // Default templates per language
+  const templates: Record<string, string> = {
+    javascript: 'function solve() {\n  // your code here\n}',
+    python: 'def solve():\n    # your code here\n    pass',
+    cpp: '#include <bits/stdc++.h>\nusing namespace std;\n\nvoid solve() {\n    // your code here\n}\n\nint main() {\n    solve();\n    return 0;\n}',
+    java: 'public class Solution {\n    public static void solve() {\n        // your code here\n    }\n}',
+  };
 
   const handleEditorChange = (value: string | undefined) => {
     setCode(value || '');
+  };
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = e.target.value;
+    setLanguage(newLang);
+    setCode(templates[newLang]); // reset code to template when switching language
   };
 
   return (
@@ -20,8 +35,8 @@ export default function InterviewPage() {
         <Col md={5} className={`${styles.panel} ${styles.questionPanel}`}>
           <h2>Question: Two Sum</h2>
           <p>
-            Given an array of integers `nums` and an integer `target`, 
-            return indices of the two numbers such that they add up to `target`.
+            Given an array of integers <code>nums</code> and an integer <code>target</code>, 
+            return indices of the two numbers such that they add up to <code>target</code>.
           </p>
           <p>
             You may assume that each input would have <strong>exactly one solution</strong>, 
@@ -31,17 +46,33 @@ export default function InterviewPage() {
   
           <h3>Example:</h3>
           <pre>
-            {`Input: nums = [2,7,11,15], target = 9
+{`Input: nums = [2,7,11,15], target = 9
 Output: [0,1]
 Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].`}
           </pre>
         </Col>
   
-        {/* Right Panel: Monaco Editor IDE */}
+        {/* Right Panel: IDE */}
         <Col md={7} className={`${styles.panel} ${styles.idePanel}`}>
+          {/* Language Selector */}
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <h4 className="mb-0">Language:</h4>
+            <Form.Select
+              value={language}
+              onChange={handleLanguageChange}
+              style={{ width: '200px' }}
+            >
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+              <option value="cpp">C++</option>
+              <option value="java">Java</option>
+            </Form.Select>
+          </div>
+
+          {/* Monaco Editor */}
           <Editor
-            height="100%"
-            defaultLanguage="javascript"
+            height="90%"
+            language={language}
             value={code}
             onChange={handleEditorChange}
             theme="vs-dark"
