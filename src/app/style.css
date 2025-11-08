@@ -1,9 +1,5 @@
-html {
-  --section-background-color: linear-gradient(to left, #141645, #1A1C5B);
-
+:root {
   --primary-color: #198754;
-}
 
-.primary-color {
-  color: var(--primary-color) !important;
+  --background-color: #0F5132;
 }

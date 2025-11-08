@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import styles from './page.module.css';
 
 export default function ResultsPage() {
@@ -28,25 +29,23 @@ export default function ResultsPage() {
           min="0"
           max="100"
           value={score}
-          onChange={(e) => setScore(Number(e.target.value))}
-          className="w-full accent-blue-600 cursor-pointer"
-        />
-        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mt-2">
-          <span>❌ Fail</span>
-          <span>✅ Pass</span>
-        </div>
+          className="w-full accent-blue-600"
+          disabled
+        /> 
       </div>
 
-      <button
-            onClick={() => router.push("/")}
-            className={styles.button}>
-            Home
-      </button>
-      <button
-            onClick={() => router.push("/interview")}
-            className={styles.button}>
-            Practice Again
-      </button>
+      <div className="flex justify-center space-x-4 mt-8">
+        <button
+              onClick={() => router.push("/")}
+              className={styles.button}>
+              Home
+        </button>
+        <button
+              onClick={() => router.push("/interview")}
+              className={styles.button}>
+              Practice Again
+        </button>
+      </div>
     </div>
   );
 }
