@@ -1,11 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Row, Col, Form } from 'react-bootstrap';
+import { useRouter } from 'next/navigation';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import Editor from '@monaco-editor/react';
 import styles from './page.module.css';
 
 export default function InterviewPage() {
+  const router = useRouter();
+
   // Code state
   const [code, setCode] = useState<string>('function solve() {\n  // your code here\n}');
   const [language, setLanguage] = useState<string>('javascript');
@@ -25,7 +28,12 @@ export default function InterviewPage() {
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLang = e.target.value;
     setLanguage(newLang);
-    setCode(templates[newLang]); // reset code to template when switching language
+    setCode(templates[newLang]);
+  };
+
+  // 👇 Handle Submit: navigate to /result page
+  const handleSubmit = () => {
+    router.push('/result');
   };
 
   return (
@@ -50,6 +58,18 @@ export default function InterviewPage() {
 Output: [0,1]
 Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].`}
           </pre>
+
+          {/* 👇 Submit button under question panel */}
+          <div className="mt-5 text-center">
+            <Button
+              variant="success"
+              size="lg"
+              onClick={handleSubmit}
+              className="px-5 py-2 rounded-full"
+            >
+              Submit Solution
+            </Button>
+          </div>
         </Col>
   
         {/* Right Panel: IDE */}
