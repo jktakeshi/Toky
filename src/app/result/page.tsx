@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import classNames from 'classnames';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import Editor from "@monaco-editor/react";
 import styles from './page.module.css';
@@ -44,7 +45,7 @@ export default function ResultsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 dark:from-black dark:to-gray-900 text-gray-800 dark:text-gray-100 p-6">
+      <div className={styles.pageContainer}>
         <p>Loading results...</p>
       </div>
     );
@@ -52,9 +53,9 @@ export default function ResultsPage() {
 
   if (!results) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 dark:from-black dark:to-gray-900 text-gray-800 dark:text-gray-100 p-6">
-        <h1 className="text-4xl font-semibold mb-2">No Results Found</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400 mb-10">
+      <div className={styles.pageContainer}>
+        <h1 className={styles.noResultsTitle}>No Results Found</h1>
+        <p className={styles.noResultsText}>
           Please complete an interview first
         </p>
         <button
@@ -84,10 +85,10 @@ export default function ResultsPage() {
   const codeLanguage = detectLanguage(code);
 
   // Determine score color
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return '#10b981'; // green
-    if (score >= 60) return '#f59e0b'; // yellow
-    return '#ef4444'; // red
+  const getScoreColorClass = (score: number) => {
+    if (score >= 80) return styles.scoreGood;
+    if (score >= 60) return styles.scoreMedium;
+    return styles.scoreBad;
   };
 
   return (
@@ -98,8 +99,7 @@ export default function ResultsPage() {
           <h1 className={styles.title}>Interview Results</h1>
           <div className={styles.scoreContainer}>
             <div 
-              className={styles.score} 
-              style={{ color: getScoreColor(finalScore) }}
+              className={classNames(styles.score, getScoreColorClass(finalScore))}
             >
               {finalScore}
               <span className={styles.scoreTotal}>/ 100</span>
@@ -107,9 +107,9 @@ export default function ResultsPage() {
             {evalResult && (
               <div className={styles.testSummary}>
                 <span className={styles.testPassed}>{evalResult.passedCount}</span>
-                <span className={styles.testSeparator}>/</span>
+                <span className={styles.testSeparator}> / </span>
                 <span className={styles.testTotal}>{evalResult.totalTests}</span>
-                <span className={styles.testLabel}> tests passed</span>
+                <span className={styles.testLabel}>tests passed</span>
               </div>
             )}
           </div>
@@ -121,12 +121,12 @@ export default function ResultsPage() {
           <Col md={6} className={styles.leftColumn}>
             <div className={styles.card}>
               <h2 className={styles.cardTitle}>Feedback</h2>
-              <div className={styles.feedbackContent}>
+              <div className={styles.feedbackContent}> 
                 {cleanFeedback
                   .split(/\n\n+/)
                   .filter(p => p.trim().length > 0)
                   .map((paragraph, index) => (
-                    <p key={index} className={styles.feedbackParagraph}>
+                    <p key={index}>
                       {paragraph.trim().replace(/\n/g, ' ')}
                     </p>
                   ))}
@@ -141,9 +141,10 @@ export default function ResultsPage() {
                   {evalResult.results.map((result: any, index: number) => (
                     <div
                       key={index}
-                      className={`${styles.testResult} ${
-                        result.passed ? styles.testPassed : styles.testFailed
-                      }`}
+                      className={classNames(styles.testResult, {
+                        [styles.testPassed]: result.passed,
+                        [styles.testFailed]: !result.passed,
+                      })}
                     >
                       <div className={styles.testHeader}>
                         <span className={styles.testIcon}>
@@ -228,13 +229,13 @@ export default function ResultsPage() {
         <div className={styles.actions}>
           <button
             onClick={() => router.push("/")}
-            className={styles.actionButton}
+            className={styles.button}
           >
             Home
           </button>
           <button
             onClick={() => router.push("/interview")}
-            className={styles.actionButton}
+            className={styles.button}
           >
             Practice Again
           </button>

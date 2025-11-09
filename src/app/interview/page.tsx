@@ -494,18 +494,6 @@ int main() {
               </Button>
             </div>
           </div>
-
-          <div className="mt-4 text-center">
-            <Button
-              variant="success"
-              size="lg"
-              onClick={handleSubmit}
-              className="px-5 py-2 rounded-full"
-              disabled={submitting}
-            >
-              {submitting ? "Evaluating..." : "Submit Solution"}
-            </Button>
-          </div>
         </Col>
 
         {/* Right Panel: IDE */}
